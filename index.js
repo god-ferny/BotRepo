@@ -2,7 +2,7 @@ const discord = require("discord.js");
 const client = new discord.Client();
 const love = require("discord_love");
 
-const prefix = "!"
+const prefix = "-"
 
 client.on("ready", () => {
     console.log("ready")
@@ -17,7 +17,7 @@ client.on("message", message => {
 
     if(comd === "help"){
         const embed = new discord.MessageEmbed()
-            .setAuthor("BloodBot")
+            .setAuthor("BloodBot", "https://cdn.discordapp.com/attachments/711785560208965683/785342295767253053/download.gif")
             .setColor("#")
             .setFooter("BloodRose")
             .setThumbnail("https://cdn.discordapp.com/attachments/711785560208965683/785342295767253053/download.gif")
@@ -26,7 +26,9 @@ client.on("message", message => {
             .addField("**User**", "|-kiss -hug ", false)
             .addField("**Use me!**", "Invite me: [here!](https://discord.com/oauth2/authorize?client_id=815536913418551310&scope=bot&permissions=8) or check out my devs [here!](https://bloodrose.net)")
         message.member.send(embed);
+        message.delete();
     }
+    //fun section!
     if(comd === "kiss"){
         if(message.mentions.users.first() === message.author){
             message.channel.send("you akwardly try to kiss yourself and... fail.")
@@ -42,6 +44,7 @@ client.on("message", message => {
             message.channel.send("you akwardly try to kiss yourself and... fail.")
             return;
         }
+        //so i really love brooke and shes really cute
     }
     if(comd === "hug"){
         if(message.mentions.users.first() === message.author){
@@ -51,7 +54,7 @@ client.on("message", message => {
         if(args[0]){
             usr = message.mentions.users.first();
             ath = message.author;
-            message.channel.send(`${ath} hug ${usr}`).then(() => message.channel.send(love.hug()))
+            message.channel.send(`${ath} hugs ${usr}`).then(() => message.channel.send(love.hug()))
             return;
         } 
         else{
@@ -66,4 +69,44 @@ client.on("message", message => {
         }
         
     }
+    if(comd === "kaori"){
+        if(!message.author.id === "270673291411324929") return;
+        const embed = new discord.MessageEmbed() //<@820526955677614109>
+            .setAuthor("BloodBot")
+            .setThumbnail("https://cdn.discordapp.com/attachments/711785560208965683/820530050851799090/image0.png")
+            .setColor("#1c99ff")
+            .setTitle("**Kaori**")
+            .setDescription("The absolute waifu bot 👌")
+        message.channel.send(embed)
+    }
+    //serious section!
+    if(comd === "kick"){
+        if(!message.mentions.users.first()) return message.channel.send("you need to mention someone to kick them!");
+        if(message.member.hasPermission("KICK_MEMBERS")){
+                let member = message.mentions.members.first();
+                let reason = args.slice(1).join(" ")
+                let member2 = message.mentions.users.first();
+                member.kick(reason).catch(console.error);
+                if(!reason)return message.channel.send(`${member2.username}#${member2.discriminator} has been kicked`);
+                if(reason)return message.channel.send(`${member2.username}#${member2.discriminator} has been kicked for: \n ${reason}`)
+            }
+        }
+    if(comd === "ban"){
+        if(!message.mentions.users.first()) return message.channel.send("you need to mention someone to ban!");
+        if(message.member.hasPermission("BAN_MEMBERS")){
+            let member = message.mentions.members.first();
+            let reason = args.slice(1).join(" ");
+            if(!member.banable) return message.channel.send("i cannot ban this user");
+            member.ban(reason)
+            message.channel.send(`${member.username}#${member.discriminator} has been banned for: \n${reason}`)
+        }
+    }
+    if(comd === "test"){
+        if(!message.author.id === "270673291411324929") return message.member.send("fuck off");
+        message.delete();
+        message.channel.send('<@366009763697524736>').then(msg => {
+            msg.delete({timeout: 40000})
+        }).catch(console.error)
+    }
 });
+client.on("")
