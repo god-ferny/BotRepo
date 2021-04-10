@@ -1,7 +1,7 @@
 const discord = require("discord.js");
 const client = new discord.Client();
 const love = require("discord_love");
-
+const fs = require("fs")
 const prefix = "-"
 
 client.on("ready", () => {
@@ -102,11 +102,17 @@ client.on("message", message => {
         }
     }
     if(comd === "test"){
-        if(!message.author.id === "270673291411324929") return message.member.send("fuck off");
-        message.delete();
-        message.channel.send('<@366009763697524736>').then(msg => {
-            msg.delete({timeout: 40000})
-        }).catch(console.error)
+        message.reply("test").then(sent => {
+            const idfor = sent.id;
+            console.log(idfor)
+            fs.writeFile("./ids.json")
+        })
     }
-});
-client.on("")
+    
+})
+client.on("messageReactionAdd", (reaction, user) => {
+
+    if(reaction.message.id === asd){
+        reaction.user.send("asd")
+    }
+})
