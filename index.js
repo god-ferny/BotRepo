@@ -141,10 +141,17 @@ client.on("message", message => {
     }
     if(comd === "stcolor"){
         if(!message.author.id === "664665712995991576" || (!message.author.id === "270673291411324929")) return;
+        let embed = new discord.MessageEmbed()
+            .setAuthor("𝖈𝖔𝖑𝖔𝖗 𝖗𝖔𝖑𝖊𝖘  🖤")
+            .setColor("#8d0e0c")
+            .setDescription("To obtain a color role, use the command -color (name of role) in <#775811656697643038> \n\nThe colors are case sensitive")
+            .setImage("https://cdn.discordapp.com/attachments/785711694163738625/830661729729249300/image0.png")
+        message.channel.send(embed)
+        message.delete()
 
     }
     if(comd === "color" || (comd === "colour")){
-        if(!message.channel.id == "775811656697643038") return message.author.send("please run this command inside of <@775811656697643038>")
+        if(!message.channel.id == "775811656697643038") return message.author.send("please run this command inside of <#775811656697643038>")
         if(!args[0]) return message.channel.send("Please specify a color")
         var role= message.member.guild.roles.cache.find(role => role.name === args[0]);
         if(!role){
