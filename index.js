@@ -145,7 +145,7 @@ client.on("message", message => {
     }
     if(comd === "color" || (comd === "colour")){
         if(!message.channel.id == "775811656697643038") return message.author.send("please run this command inside of <@775811656697643038>")
-        if(!args[0]) return message.channel.send("please give me a color to give you")
+        if(!args[0]) return message.channel.send("Please specify a color")
         var role= message.member.guild.roles.cache.find(role => role.name === args[0]);
         if(!role){
             message.channel.send("That is not an available color").then(msg => {
@@ -156,7 +156,7 @@ client.on("message", message => {
         let roles1 = args[0]
         message.member.roles.add(role).then(err => {
             if(err) return console.log(err)
-            message.channel.send(`i gave you the ${args[0]} role`)
+            message.channel.send(`I gave you the ${args[0]} role`)
         })
         message.delete()
     }
