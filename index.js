@@ -1,6 +1,8 @@
+const { ENGINE_METHOD_CIPHERS } = require("constants");
 const discord = require("discord.js");
-const client = new discord.Client();
+const client = new discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 const love = require("discord_love");
+const { TIMEOUT } = require("dns");
 const fs = require("fs")
 const prefix = "-"
 
@@ -101,18 +103,73 @@ client.on("message", message => {
             message.channel.send(`${member.username}#${member.discriminator} has been banned for: \n${reason}`)
         }
     }
-    if(comd === "test"){
-        message.reply("test").then(sent => {
-            const idfor = sent.id;
-            console.log(idfor)
-            fs.writeFile("./ids.json")
+    if(comd === "kill"){
+        if(!message.author.id === "270673291411324929") return;
+        message.channel.send("do you wanna kill me?")
+        message.react("✅").then(r => {
+            message.react("❌")
+        })
+        message.awaitReactions((reaction, user) => user.id == message.author.id && (reaction.emoji.name == '✅' || reaction.emoji.name == '❌'),
+        { max: 1, time: 30000 }).then(collected => {
+                if (collected.first().emoji.name == '✅') {
+                        message.reply('dead.');
+                        client.destroy();
+                }
+                else
+                        message.channel.send("guess not")
+        }).catch(() => {
+                return;
+        });
+    }
+    if(comd === "boinfo"){
+        if(!message.author.id === "664665712995991576" || (!message.author.id === "270673291411324929")) return;
+        let embed = new discord.MessageEmbed()
+            .setAuthor("𝖇𝖑𝖔𝖔𝖉𝖗𝖔𝖘𝖊 𝖇𝖔𝖔𝖘𝖙𝖊𝖗𝖘  🖤")
+            .setColor("#8d0e0c")
+            .addField("**Booster perks:**", "One custom role with color. \n Double entry in server-wide giveaways. \nNickname perks to change your own name. \nEarly acess to new servers and features as a beta tester.")
+            message.delete();
+        message.channel.send(embed)
+    }   
+    if(comd === "stinfo"){
+        if(!message.author.id === "664665712995991576" || (!message.author.id === "270673291411324929")) return;
+        let embed = new discord.MessageEmbed()
+            .setAuthor("𝖇𝖑𝖔𝖔𝖉𝖗𝖔𝖘𝖊 𝖘𝖙𝖆𝖋𝖋  🖤")
+            .setColor("#8d0e0c")
+            .addField("Bloodrose Community is looking for staff! We are looking for individuals who are:", ". ˚ ⸝⸝ Well acquainted with Discord and Minecraft \n⸝⸝ Want to contribute to great community \n. ˚ ⸝⸝ Interested in being a part of a fun and hardworking staff team \n⸝⸝ Have skills in video editing, moderation, programming, or web development \n. ˚ ⸝⸝ Can contribute to the server in a unique way \n\nWe aim to have a diverse team full of people with all different skill sets. If you feel like you are interested, or meet some of these qualifications, please express your interest in the Google Form attached.\n\n **Staff Form:** <https://docs.google.com/forms/d/e/1FAIpQLScB6oakeYcBEW4oKdZX3pqHilRw5JdWgAVe6UEJoRRkXutS1Q/viewform?usp=sf_link?>")
+            message.delete();
+        message.channel.send(embed)
+    }
+    if(comd === "stcolor"){
+        if(!message.author.id === "664665712995991576" || (!message.author.id === "270673291411324929")) return;
+
+    }
+    if(comd === "color" || (comd === "colour")){
+        if(!message.channel.id == "775811656697643038") return message.author.send("please run this command inside of <@775811656697643038>")
+        if(!args[0]) return message.channel.send("please give me a color to give you")
+        var role= message.member.guild.roles.cache.find(role => role.name === args[0]);
+        if(!role){
+            message.channel.send("That is not an available color").then(msg => {
+                msg.delete({timeout: 1000})
+            })
+            message.delete()
+        }
+        let roles1 = args[0]
+        message.member.roles.add(role).then(err => {
+            if(err) return console.log(err)
+            message.channel.send(`i gave you the ${args[0]} role`)
+        })
+        message.delete()
+    }
+
+
+
+    if(comd === "clean"){
+        var del = args[0] + 1
+        message.channel.bulkDelete(args[0]).then(r => {
+            message.channel.send("cleaned " + args[0] +" messages").then(msg => {
+                msg.delete({timeout: 1000})
+            }).catch(console.error)
         })
     }
-    
-})
-client.on("messageReactionAdd", (reaction, user) => {
+});
 
-    if(reaction.message.id === asd){
-        reaction.user.send("asd")
-    }
-})
