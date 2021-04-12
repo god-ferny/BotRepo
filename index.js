@@ -151,6 +151,17 @@ client.on("message", message => {
 
     }
     if(comd === "color" || (comd === "colour")){
+        var blacklist = [
+            "owner",
+            "Admin",
+            "Mod",
+            "Server Booster",
+            "Active Member",
+            "Member",
+            "New Member",
+            "Bots",
+        ]
+        if(args[0] = blacklist) return message.channel.send("You can only use color roles.")
         if(!message.channel.id == "775811656697643038") return message.author.send("please run this command inside of <#775811656697643038>")
         if(!args[0]) return message.channel.send("Please specify a color")
         var role= message.member.guild.roles.cache.find(role => role.name === args[0]);
