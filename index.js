@@ -196,7 +196,8 @@ client.on("messageReactionAdd", async (reaction, user) => {
     if(user.bot) return;
     if(reaction.message.id === "831109282446835804"){
         if(reaction = "🎫"){
-            reaction.message.guild.channels.create()
+            reaction.message.guild.channels.cache()
+            
         }
     }
 })
