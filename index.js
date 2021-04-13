@@ -139,6 +139,16 @@ client.on("message", message => {
             message.delete();
         message.channel.send(embed)
     }
+    if(comd === "stticker"){
+        let embed = new discord.MessageEmbed()
+            .setAuthor("𝖇𝖑𝖔𝖔𝖉𝖗𝖔𝖘𝖊 𝖙𝖎𝖈𝖐𝖊𝖙 𝖙𝖔𝖔𝖑  🖤")
+            .setColor("#8d0e0c")
+            .setDescription("react to this to open a ticket")
+        message.channel.send(embed).then(message => {
+            message.react("🎫")
+        })
+        message.delete()
+    }
     if(comd === "stcolor"){
         if(!message.author.id === "664665712995991576" || (!message.author.id === "270673291411324929")) return;
         let embed = new discord.MessageEmbed()
@@ -151,33 +161,23 @@ client.on("message", message => {
 
     }
     if(comd === "color" || (comd === "colour")){
-        var blacklist = [
-            "owner",
-            "Admin",
-            "Mod",
-            "Server Booster",
-            "Active Member",
-            "Member",
-            "New Member",
-            "Bots",
-        ]
-        if(args[0] = blacklist) return message.channel.send("You can only use color roles.")
-        if(!message.channel.id == "775811656697643038") return message.author.send("please run this command inside of <#775811656697643038>")
-        if(!args[0]) return message.channel.send("Please specify a color")
-        var role= message.member.guild.roles.cache.find(role => role.name === args[0]);
-        if(!role){
-            message.channel.send("That is not an available color").then(msg => {
-                msg.delete({timeout: 1000})
-            })
-            message.delete()
-        }
-        let roles1 = args[0]
-        message.member.roles.add(role).then(err => {
-            if(err) return console.log(err)
-            message.channel.send(`I gave you the ${args[0]} role`)
+        if(!message.author.id === "664665712995991576" || (!message.author.id === "270673291411324929")) return;
+
+        const blacklist = [ "owner", "admin", "mod", "server booster", "active member", "member", "new member", "bots" ];
+
+        if(!args[0]) return;
+        var asd = args[0].toLocaleLowerCase();
+        role = message.guild.roles.cache.find(role => role.name === asd)
+
+        if(blacklist.includes(asd)) return message.author.send("nope.")
+
+
+        message.member.roles.add(role).then(message => {
+            message.delete({timout: 5000})
         })
         message.delete()
-    }
+
+    };
 
 
 
@@ -189,5 +189,12 @@ client.on("message", message => {
             }).catch(console.error)
         })
     }
+
 });
 
+client.on("messageReactionAdd", async (reaction, user) => {
+    if(user.bot) return;
+    if(reaction.message.id === ""){
+
+    }
+})
