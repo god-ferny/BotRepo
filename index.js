@@ -2,7 +2,7 @@ const { ENGINE_METHOD_CIPHERS } = require("constants");
 const discord = require("discord.js");
 const client = new discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 const love = require("discord_love");
-const { TIMEOUT } = require("dns");
+require("dotenv").config()
 const fs = require("fs")
 const prefix = "-"
 
@@ -10,7 +10,7 @@ client.on("ready", () => {
     console.log("ready")
 });
 
-client.login("ODE1NTM2OTEzNDE4NTUxMzEw.YDt18A.UhTfInaOSNOhjO_0rHy35jvcq-4")
+client.login(process.env.TOKEN)
 
 client.on("message", message => {
     if(!message.content.startsWith(prefix) || (message.author.bot)) return;
@@ -103,7 +103,7 @@ client.on("message", message => {
             message.channel.send(`${member.username}#${member.discriminator} has been banned for: \n${reason}`)
         }
     }
-    if(comd === "kill"){
+   /* if(comd === "kill"){
         if(!message.author.id === "270673291411324929") return;
         message.channel.send("do you wanna kill me?")
         message.react("✅").then(r => {
@@ -120,7 +120,7 @@ client.on("message", message => {
         }).catch(() => {
                 return;
         });
-    }
+    }*/
     if(comd === "boinfo"){
         if(!message.author.id === "664665712995991576" || (!message.author.id === "270673291411324929")) return;
         let embed = new discord.MessageEmbed()
@@ -169,9 +169,8 @@ client.on("message", message => {
         var asd = args[0].toLocaleLowerCase();
         role = message.guild.roles.cache.find(role => role.name === asd)
 
-        if(blacklist.includes(asd)) return message.author.send("nope.")
-
-
+        if(blacklist.includes(asd)) return message.author.send("nope.");
+        
         message.member.roles.add(role).then(message => {
             message.delete({timout: 5000})
         })
