@@ -1,202 +1,187 @@
-const { ENGINE_METHOD_CIPHERS } = require("constants");
-const discord = require("discord.js");
-const client = new discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
-const love = require("discord_love");
-require("dotenv").config()
-const fs = require("fs")
-const prefix = "-"
+const { Client, Intents,  MessageActionRow, MessageButton, MessageEmbed  } = require('discord.js');
+const client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
+//gotta get our config
+require('dotenv').config();
+
+
+//prefix can be whatever
+const prefix = ">";
+
+client.login(process.env.token);
+//bot token for logging in
 
 client.on("ready", () => {
-    console.log("ready")
+    console.log("bot started");
 });
 
-client.login(process.env.TOKEN)
+//this is when the bot gets a message
+client.on("messageCreate", async message => {
+    if(message.content.startsWith("!button")){
+        if(message.author.id != "270673291411324929") return;
+		const row = new MessageActionRow()
+			.addComponents(
+				new MessageButton()
+					.setCustomId('primary1')
+					.setLabel('button')
+					.setStyle('PRIMARY'),
+			);
 
-client.on("message", message => {
-    if(!message.content.startsWith(prefix) || (message.author.bot)) return;
-    const args = message.content.slice(prefix.length).trim().split(' ');
-    const comd = args.shift().toLowerCase();
-
-    if(comd === "help"){
-        const embed = new discord.MessageEmbed()
-            .setAuthor("BloodBot", "https://cdn.discordapp.com/attachments/711785560208965683/785342295767253053/download.gif")
-            .setColor("#")
-            .setFooter("BloodRose")
-            .setThumbnail("https://cdn.discordapp.com/attachments/711785560208965683/785342295767253053/download.gif")
-            .setTitle("Help | Commands")
-            .addField("**Moderation**", "|-kick -ban -addrole -rmvrole ", false)
-            .addField("**User**", "|-kiss -hug ", false)
-            .addField("**Use me!**", "Invite me: [here!](https://discord.com/oauth2/authorize?client_id=815536913418551310&scope=bot&permissions=8) or check out my devs [here!](https://bloodrose.net)")
-        message.member.send(embed);
+        await message.channel.send({ content: 'press the button', components: [row] })
+        
+       
+    }
+    
+    if(message.content === "*roles"){
+        var row2 = new MessageActionRow()
+            .addComponents(
+                new MessageButton()
+                    .setCustomId('role1')
+                    .setLabel('role menu')
+                    .setStyle('DANGER'),
+            );
+        await message.channel.send({content: 'welcome to the role menu!', ephemeral: true, components: [row2]})
         message.delete();
     }
-    //fun section!
-    if(comd === "kiss"){
-        if(message.mentions.users.first() === message.author){
-            message.channel.send("you akwardly try to kiss yourself and... fail.")
-            return;
-        }
-        if(args[0]){
-            usr = message.mentions.users.first();
-            ath = message.author;
-            message.channel.send(`${ath} kisses ${usr}`).then(() => message.channel.send(love.kiss()))
-            return;
-        } 
-        else{
-            message.channel.send("you akwardly try to kiss yourself and... fail.")
-            return;
-        }
-        //so i really love brooke and shes really cute
-    }
-    if(comd === "hug"){
-        if(message.mentions.users.first() === message.author){
-            message.channel.send("you akwardly try to hug yourself and... fail.")
-            return;
-        }
-        if(args[0]){
-            usr = message.mentions.users.first();
-            ath = message.author;
-            message.channel.send(`${ath} hugs ${usr}`).then(() => message.channel.send(love.hug()))
-            return;
-        } 
-        else{
-            message.channel.send("you akwardly try to hug yourself and... fail.")
-            return;
-        }
-    }
-    if(comd === "beans"){
-        if(message.author.id === "664665712995991576" || (message.author.id === "270673291411324929")){
-            message.channel.send("https://cdn.discordapp.com/attachments/815813123210346517/820502289616732221/image0.png")
-            return;
-        }
-        
-    }
-    if(comd === "kaori"){
-        if(!message.author.id === "270673291411324929") return;
-        const embed = new discord.MessageEmbed() //<@820526955677614109>
-            .setAuthor("BloodBot")
-            .setThumbnail("https://cdn.discordapp.com/attachments/711785560208965683/820530050851799090/image0.png")
-            .setColor("#1c99ff")
-            .setTitle("**Kaori**")
-            .setDescription("The absolute waifu bot 👌")
-        message.channel.send(embed)
-    }
-    //serious section!
-    if(comd === "kick"){
-        if(!message.mentions.users.first()) return message.channel.send("you need to mention someone to kick them!");
-        if(message.member.hasPermission("KICK_MEMBERS")){
-                let member = message.mentions.members.first();
-                let reason = args.slice(1).join(" ")
-                let member2 = message.mentions.users.first();
-                member.kick(reason).catch(console.error);
-                if(!reason)return message.channel.send(`${member2.username}#${member2.discriminator} has been kicked`);
-                if(reason)return message.channel.send(`${member2.username}#${member2.discriminator} has been kicked for: \n ${reason}`)
-            }
-        }
-    if(comd === "ban"){
-        if(!message.mentions.users.first()) return message.channel.send("you need to mention someone to ban!");
-        if(message.member.hasPermission("BAN_MEMBERS")){
-            let member = message.mentions.members.first();
-            let reason = args.slice(1).join(" ");
-            if(!member.banable) return message.channel.send("i cannot ban this user");
-            member.ban(reason)
-            message.channel.send(`${member.username}#${member.discriminator} has been banned for: \n${reason}`)
-        }
-    }
-   /* if(comd === "kill"){
-        if(!message.author.id === "270673291411324929") return;
-        message.channel.send("do you wanna kill me?")
-        message.react("✅").then(r => {
-            message.react("❌")
-        })
-        message.awaitReactions((reaction, user) => user.id == message.author.id && (reaction.emoji.name == '✅' || reaction.emoji.name == '❌'),
-        { max: 1, time: 30000 }).then(collected => {
-                if (collected.first().emoji.name == '✅') {
-                        message.reply('dead.');
-                        client.destroy();
-                }
-                else
-                        message.channel.send("guess not")
-        }).catch(() => {
-                return;
-        });
-    }*/
-    if(comd === "boinfo"){
-        if(!message.author.id === "664665712995991576" || (!message.author.id === "270673291411324929")) return;
-        let embed = new discord.MessageEmbed()
-            .setAuthor("𝖇𝖑𝖔𝖔𝖉𝖗𝖔𝖘𝖊 𝖇𝖔𝖔𝖘𝖙𝖊𝖗𝖘  🖤")
-            .setColor("#8d0e0c")
-            .addField("**Booster perks:**", "One custom role with color. \n Double entry in server-wide giveaways. \nNickname perks to change your own name. \nEarly acess to new servers and features as a beta tester.")
-            message.delete();
-        message.channel.send(embed)
-    }   
-    if(comd === "stinfo"){
-        if(!message.author.id === "664665712995991576" || (!message.author.id === "270673291411324929")) return;
-        let embed = new discord.MessageEmbed()
-            .setAuthor("𝖇𝖑𝖔𝖔𝖉𝖗𝖔𝖘𝖊 𝖘𝖙𝖆𝖋𝖋  🖤")
-            .setColor("#8d0e0c")
-            .addField("Bloodrose Community is looking for staff! We are looking for individuals who are:", ". ˚ ⸝⸝ Well acquainted with Discord and Minecraft \n⸝⸝ Want to contribute to great community \n. ˚ ⸝⸝ Interested in being a part of a fun and hardworking staff team \n⸝⸝ Have skills in video editing, moderation, programming, or web development \n. ˚ ⸝⸝ Can contribute to the server in a unique way \n\nWe aim to have a diverse team full of people with all different skill sets. If you feel like you are interested, or meet some of these qualifications, please express your interest in the Google Form attached.\n\n **Staff Form:** <https://docs.google.com/forms/d/e/1FAIpQLScB6oakeYcBEW4oKdZX3pqHilRw5JdWgAVe6UEJoRRkXutS1Q/viewform?usp=sf_link?>")
-            message.delete();
-        message.channel.send(embed)
-    }
-    if(comd === "stticker"){
-        let embed = new discord.MessageEmbed()
-            .setAuthor("𝖇𝖑𝖔𝖔𝖉𝖗𝖔𝖘𝖊 𝖙𝖎𝖈𝖐𝖊𝖙 𝖙𝖔𝖔𝖑  🖤")
-            .setColor("#8d0e0c")
-            .setDescription("react to this to open a ticket")
-        message.channel.send(embed).then(message => {
-            message.react("🎫")
-        })
-        message.delete()
-    }
-    if(comd === "stcolor"){
-        if(!message.author.id === "664665712995991576" || (!message.author.id === "270673291411324929")) return;
-        let embed = new discord.MessageEmbed()
-            .setAuthor("𝖈𝖔𝖑𝖔𝖗 𝖗𝖔𝖑𝖊𝖘  🖤")
-            .setColor("#8d0e0c")
-            .setDescription("To obtain a color role, use the command -color (name of role) in <#775811656697643038> \n\nThe colors are case sensitive")
-            .setImage("https://cdn.discordapp.com/attachments/785711694163738625/830661729729249300/image0.png")
-        message.channel.send(embed)
-        message.delete()
-
-    }
-    if(comd === "color" || (comd === "colour")){
-        if(!message.author.id === "664665712995991576" || (!message.author.id === "270673291411324929")) return;
-
-        const blacklist = [ "owner", "admin", "mod", "server booster", "active member", "member", "new member", "bots" ];
-
-        if(!args[0]) return;
-        var asd = args[0].toLocaleLowerCase();
-        role = message.guild.roles.cache.find(role => role.name === asd)
-
-        if(blacklist.includes(asd)) return message.author.send("nope.");
-        
-        message.member.roles.add(role).then(message => {
-            message.delete({timout: 5000})
-        })
-        message.delete()
-
-    };
-
-
-
-    if(comd === "clean"){
-        var del = args[0] + 1
-        message.channel.bulkDelete(args[0]).then(r => {
-            message.channel.send("cleaned " + args[0] +" messages").then(msg => {
-                msg.delete({timeout: 1000})
-            }).catch(console.error)
-        })
-    }
-
 });
+client.on('interactionCreate', interaction => {
+	if (!interaction.isButton()) return;
+    if(interaction.customId === "primary1"){
+        interaction.reply({ content: `<@${interaction.user.id}> got fucking creamed`})
+    };
+	if(interaction.customId === "role1"){
+        const embed = new MessageEmbed()
+            .setColor('#6b0004')
+            .setTitle('Red Colors')
+            .setAuthor(client.user.username, client.user.avatarURL)
+            .setDescription("The Role Menu is an interactive menu to asign roles and colors to yourself \n press the right arrow to go forward a page and the left arrow to go back")
 
-client.on("messageReactionAdd", async (reaction, user) => {
-    if(user.bot) return;
-    if(reaction.message.id === "831109282446835804"){
-        if(reaction = "🎫"){
-            reaction.message.guild.channels.cache()
-            
+
+            const row2 = new MessageActionRow()
+			.addComponents(
+                new MessageButton()
+                    .setCustomId('page2')
+                    .setLabel('->')
+                    .setStyle('PRIMARY')
+			);
+
+
+            interaction.reply({embeds: [embed], ephemeral: true, components: [row2]})
+    }
+    if(interaction.customId === 'role2'){
+        var role = client.guilds.cache.find(guild => guild.id === "517779789042417664").roles.cache.find(role => role.name === "red");
+        if(interaction.member.roles.cache.some((role) => role.name === "red")){
+            interaction.member.roles.remove(role)
+            interaction.reply({content: 'red has been removed', ephemeral: true})
+        } else {
+        interaction.member.roles.add(role);
+        interaction.reply({content: 'red has been added', ephemeral: true})
         }
     }
-})
+    if(interaction.customId === 'role3'){
+        var role = client.guilds.cache.find(guild => guild.id === "517779789042417664").roles.cache.find(role => role.name === "blue");
+        if(interaction.member.roles.cache.some((role) => role.name === "blue")){
+            interaction.member.roles.remove(role)
+            interaction.reply({content: 'blue has been removed', ephemeral: true})
+        } else {
+        interaction.member.roles.add(role);
+        interaction.reply({content: 'blue has been added', ephemeral: true})
+        }
+    }
+    if(interaction.customId === 'role4'){
+        var role = client.guilds.cache.find(guild => guild.id === "517779789042417664").roles.cache.find(role => role.name === "green");
+        if(interaction.member.roles.cache.some((role) => role.name === "green")){
+            interaction.member.roles.remove(role)
+            interaction.reply({content: 'green has been removed', ephemeral: true})
+        } else {
+        interaction.member.roles.add(role);
+        interaction.reply({content: 'green has been added', ephemeral: true})
+        }
+    }
+    if(interaction.customId === 'role5'){
+        var role = client.guilds.cache.find(guild => guild.id === "517779789042417664").roles.cache.find(role => role.name === "yellow");
+        if(interaction.member.roles.cache.some((role) => role.name === "yellow")){
+            interaction.member.roles.remove(role)
+            interaction.reply({content: 'yellow has been removed', ephemeral: true})
+        } else {
+        interaction.member.roles.add(role);
+        interaction.reply({content: 'yellow has been added', ephemeral: true})
+        }
+    }
+    if(interaction.customId === 'page2'){
+        const embed = new MessageEmbed()
+            .setColor('#6b0004')
+            .setTitle('page 2 test')
+            .setAuthor(client.user.username, client.user.avatarURL)
+            .setDescription('This is the first set of roles, our green, yellow, and blue!')
+            .addFields(
+            {name: 'Leaf', value: `🌿`, inline: true},
+            {name: '|--|', value: `|--|`, inline: true},
+            {name: 'Honey', value: `🍯`, inline: true},
+            {name: '|--|', value: `|--|`, inline: true},
+            {name: 'Ocean', value: `🌊`, inline: true},
+            {name: '|--|', value: `|--|`, inline: true},
+        );
+
+        const row = new MessageActionRow()
+        .addComponents(
+            new MessageButton()
+                .setCustomId('role1')
+                .setLabel('<-')
+                .setStyle('PRIMARY'),
+
+            new MessageButton() 
+                .setCustomId('role4')
+                .setLabel('Leaf 🌿')
+                .setStyle('PRIMARY'),
+            
+            new MessageButton()
+                .setCustomId('role5')
+                .setLabel('Honey 🍯')
+                .setStyle('PRIMARY'),
+
+            new MessageButton()
+                .setCustomId('role3')
+                .setLabel('Ocean 🌊')
+                .setStyle('PRIMARY'),
+
+
+
+            new MessageButton()
+                .setCustomId('page3')
+                .setLabel('->')
+                .setStyle('PRIMARY'),
+
+        );
+
+        interaction.reply({embeds: [embed], ephemeral: true, components: [row]})
+    }
+    if(interaction.customId === 'page3'){
+        const embed = new MessageEmbed()
+            .setColor('#6b0004')
+            .setTitle('page 3 test')
+            .setAuthor(client.user.username, client.user.avatarURL)
+            .addFields(
+            {name: 'Rose', value: `🌹`, inline: true},
+
+        );
+
+        const row = new MessageActionRow()
+        .addComponents(
+            new MessageButton()
+                .setCustomId('page2')
+                .setLabel('<-')
+                .setStyle('PRIMARY'),
+            new MessageButton()
+                .setCustomId('role2')
+                .setLabel("Rose 🌹")
+                .setStyle('PRIMARY'),
+
+
+
+
+
+        );
+
+        interaction.reply({embeds: [embed], ephemeral: true, components: [row]})
+    }
+});
