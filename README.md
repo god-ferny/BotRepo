@@ -1,2 +1,8 @@
-# bloodbot
-a small little test of using the discord button features to make a interactive menu in chat
+# ABOUT
+A repo storing my basic projects and sorts, pretty much showing what im working on
+
+# TO DO
+- document things
+- organize 
+- add
+- learn!
