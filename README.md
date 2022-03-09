@@ -6,3 +6,4 @@ A repo storing my basic projects and sorts, pretty much showing what im working 
 - organize 
 - add
 - learn!
+-  not push every one of my .envs again!
