@@ -8,12 +8,23 @@ const db = require("quick.db");
 var xp = new db.table('xp')
 var age = new db.table('age')
 var pro = new db.table('pro')
-var fcolor = new db.table('fcolor')
 var merrydb = new db.table('merrydb')
+var punish = new db.table('punishment')
+
+console.log("starting snowfelll...")
 
 //to confirm our bot started correctly
 client.on("ready", () => {
-    console.log("bot ready")
+    process.stdout.write(
+`                                                                    
+@@@@@@ @@@  @@@  @@@@@@  @@@  @@@  @@@ @@@@@@@@ @@@@@@@@ @@@      @@@      
+!@@     @@!@!@@@ @@!  @@@ @@!  @@!  @@! @@!      @@!      @@!      @@!      
+ !@@!!  @!@@!!@! @!@  !@! @!!  !!@  @!@ @!!!:!   @!!!:!   @!!      @!!      
+    !:! !!:  !!! !!:  !!!  !:  !!:  !!  !!:      !!:      !!:      !!:      
+::.: :  ::    :   : :. :    ::.:  :::    :       : :: ::  : ::.: : : ::.: :
+`
+    )
+    process.stdout.write("")
 });
 
 client.login(process.env.TOKEN);
@@ -97,7 +108,6 @@ client.on("messageCreate", message => {
         //check to see if they mentioned someone in their message if not then we go by the author of the message
         if(!message.mentions.users.first()) var user = message.author
         else var user = message.mentions.users.first()
-        
         //check to see AGE is set in our db
         if(age.has(`id_${user.id}.age`) === false){
             age.set(`id_${user.id}`, { age: "n/a"});
@@ -128,7 +138,7 @@ client.on("messageCreate", message => {
             .addField("pronouns", `${pro.get(`id_${user.id}.Pronounes`)}`, true)
             .addField("About me", `${db.get(`id_${user.id}.poem`)}`)
             .setFooter({ text: `${client.user.username}`, iconURL: client.user.avatarURL()});
-        if(user.id === "270673291411324929"){
+        if(user.id === "270673291411324929" || user.id === "123858285613809665"){
             embed.addField("Owner", "true", true)
             embed.addField("Xp", `${xp1.xp}`, true)
         }
@@ -140,6 +150,7 @@ client.on("messageCreate", message => {
 
     //dev command
     if(cmd === "listdb"){
+        if(message.author.id != "270673291411324929") return;
         var msg1 = db.all()
         var msg2 = JSON.stringify(msg1)
         message.channel.send("db db :" + msg2)
@@ -169,6 +180,20 @@ client.on("messageCreate", message => {
     };
     if(cmd === "marry"){
         var user =  message.mentions.users.first();
+        if(user.id = client.user.id){
+            if(message.author.id === "260421156643799053"){
+
+                message.reply("of course bb :)")
+                merrydb.set(`id_${message.author.id}`, {to: `${client.user.id}`})
+                merrydb.set(`id_${client.id}`, {to: `${message.author.id}`})
+                return;
+                
+            } else {
+                message.reply("im already taken!")
+                return;
+            };
+            
+        }
         if(!user) return message.reply("you must ping someone to use this command");
 
         if(merrydb.has(`id_${message.author.id}`)) return message.channel.send("you must divorce before you can remarry");
@@ -193,17 +218,64 @@ client.on("messageCreate", message => {
     if(cmd === "help"){
         let embed = new MessageEmbed()
             .addField("cmd: Profiletxt", "allows the user to set the abount me text of their profile")
-            .addField("cmd: Pronounes", "allows the user to set profile pronounes")
+            .addField("cmd: Pronouns", "allows the user to set profile pronouns")
             .addField("cmd: Age", "allows the user to set their age")
-            .addField("cmd: marry", "marrying of another user, they must accept for you to be considered married. The other user will apear on eachothers profiles")
-            .addField("cmd: divorce", "divorces your married partner removing them from your profile  [WIP]")
-            .addField("acmd: setprefix", "sets the bots prefix for the current server")
+            .addField("cmd: Marry", "marrying of another user, they must accept for you to be considered married. The other user will apear on eachothers profiles")
+            .addField("cmd: Divorce", "divorces your married partner removing them from your profile  [WIP]")
+            .addField("cmd: Setprefix", "sets the bots prefix for the current server")
         message.channel.send({embeds: [embed]})
     }
+    if(cmd === "divorce"){
+        if(message.author.id === "123858285613809665" | message.author.id === "260421156643799053"){
+            message.reply("no")
+            return;
+        };
+        if(merrydb.has(`id_${message.author.id}`) === true){
+            message.reply("are you sure u wanna do that partner?")
+            //const filter = m => m.author.id === message.author.id
+            const collector = message.channel.createMessageCollector()
+            collector.on('collect', m =>{
+                if(m.author.id != message.author.id) return console.log("cump");
+                if(m.content = "yes"){
+                    m.reply(`i now divorce <@!${m.author.id}> and <@!` + merrydb.get(`id_${message.author.id}.to` + ">"))
+                    merrydb.delete('id_'+ merrydb.get(`id_${message.author.id}.to`))
+                    merrydb.delete(`id_${m.author.id}`)
+                    
+                } else {
+                    return;
+                }
+                collector.stop({ reason: "worked"})
+            })
+        } else {
+            message.reply("you must be married to divorce someone!")
+        }
+    }
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~admin~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if(cmd === "warn"){
+        if(message.member.permissions.has(Permissions.FLAGS.KICK_MEMBERS)){
+            if(!args[0]){
+                var reason = "cope"
+            }
+            else{
+                var reason = args[0]
+            }
+            if(!message.mentions.first()) return message.reply('you must ping someone to warn');
+            
+            punish.set(`id_${message.mentions.first().id}_g${message.guild.id}`, {reason: `${reason}`})
+
+       } else {
+        message.reply("you dont have permissions to do this")
+       }
+
+       return;
+    };
 })
 
 
 //sets the guild default prefix when the bot is added
 client.on("guildCreate", async guild => {
     db.set(`gid_${guild.id}`, { prefix: `!`});
+
+
+
 })
