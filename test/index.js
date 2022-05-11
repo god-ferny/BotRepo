@@ -1,4 +1,4 @@
-const { Client, Intents, MessageActionRow, MessageButton, MessageEmbed, ClientPresence, Permissions, ReactionUserManager, Application, Collection } = require('discord.js'); //NOTE: Try to remember this 
+const { Client, Intents, MessageActionRow, MessageButton, MessageEmbed, ClientPresence, Permissions, ReactionUserManager, Application, Collection, Message } = require('discord.js'); //NOTE: Try to remember this 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 const fs = require('node:fs');
 
@@ -19,14 +19,14 @@ client.once("ready", () => {
     console.clear()
     console.log("loaded");
 
-    process.stdout.write(
+    process.stdout.write( "\x1b[31m" +
         `                                                                    
         @@@@@@ @@@  @@@  @@@@@@  @@@  @@@  @@@ @@@@@@@@ @@@@@@@@ @@@      @@@      
         !@@     @@!@!@@@ @@!  @@@ @@!  @@!  @@! @@!      @@!      @@!      @@!      
          !@@!!  @!@@!!@! @!@  !@! @!!  !!@  @!@ @!!!:!   @!!!:!   @!!      @!!      
             !:! !!:  !!! !!:  !!!  !:  !!:  !!  !!:      !!:      !!:      !!:      
         ::.: :  ::    :   : :. :    ::.:  :::    :       : :: ::  : ::.: : : ::.: :
-        `)
+        ` + "\x1b[0m")
 });
 
 client.commands = new Collection();
@@ -36,16 +36,16 @@ for (const file of commandFiles) {
 	// Set a new item in the Collection
 	// With the key as the command name and the value as the exported module
 	client.commands.set(command.data.name, command);
+	
 }
 
-client.on("messageCreaten", message =>{
-	
+client.on("messageCreated", message =>{
+
+
     if(xp.has(`id_${message.author.id}`) === false){
         xp.set(`id_${message.author.id}`, { xp : 1})
     }
-
 	xp.add(`id_${message.author.id}.xp`, 1)
-
     
 
 })

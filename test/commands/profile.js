@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const {MessageEmbed} = require('discord.js')
+const {MessageEmbed, Discord, interaction} = require('discord.js')
+
 
 const db = require("quick.db")
 
@@ -14,11 +15,10 @@ module.exports = {
 
 	data: new SlashCommandBuilder()
 		.setName('profile')
-		.setDescription('shows your pretty profile!'),
+		.setDescription('shows your pretty profile!')
+		.addUserOption(option => option.setName('target').setDescription("Select a user!")),
 	async execute(interaction) {
 
-		if (interaction.options.getSubcommand() === 'user') {
-			SlashCommandBuilder.addUserOption(option => option.setName('target').setDescription("Select a user!"))
 
 			if(!interaction.options.getUser('target')) var user = interaction.user
 			else var user = interaction.options.getUser('target')
@@ -43,7 +43,7 @@ module.exports = {
 	
 			var xp2 = JSON.stringify(xp.get(`id_${user.id}`))
 			var xp1 = JSON.parse(xp2)
-	
+
 			let embed = new MessageEmbed()
 				.setTitle(`${user.username}'s Profile`)
 				.setThumbnail(`${user.displayAvatarURL()}`)
@@ -56,24 +56,6 @@ module.exports = {
 				embed.addField("Xp", `${xp1.xp}`, true)
 			}
 			interaction.reply({embeds: [embed]})
-		}
-		if (interaction.options.getSubcommand() === 'text') {
-			SlashCommandBuilder().addStringOption(option => option.setName('input').setDescription('Enter a string'));
-
-			const poem = interaction.options.getString('input')
-
-			if(poem.length >= 1024){
-				interaction.reply({
-					content: "your profile text is to big for discord!",
-					ephemeral: true
-				});
-			};
-			db.set(`id_${message.author.id}.poem`, `${poem}`);
-			interaction.reply({
-				content: `I have set your profile text to: ${poem}`
-			})
-
-		}	
 
 			
 	},
