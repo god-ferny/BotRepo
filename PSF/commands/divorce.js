@@ -8,10 +8,11 @@ module.exports = {
 		.setDescription('divorce'),
 	async execute(interaction) {
 		if(await db.has(`id_${interaction.user.id}.so`) === false){
-            interaction.reply("you cannot divorce someone you've never merried.")
+            interaction.reply("you cannot divorce someone you've never married.")
         }
         await db.delete(`id_${await db.get(`id_${interaction.user.id}.so`)}.so`)
         await db.delete(`id_${interaction.user.id}.so`)
         interaction.reply("you are now divorced")
+		return;
 	},
 };

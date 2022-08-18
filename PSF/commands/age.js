@@ -23,7 +23,7 @@ module.exports = {
 			})
 			return;
 		} 
-		db.set(`id_${interaction.user.id}.age`, `${integer}`)
+		await db.set(`id_${interaction.user.id}.age`, `${integer}`)
 		interaction.reply({
 			ephemeral: true,
 			content: `your age has been set to ${await db.get(`id_${interaction.user.id}.age`)}`
