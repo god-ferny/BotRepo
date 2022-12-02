@@ -28,6 +28,7 @@ module.exports = {
             interaction.reply("that user is already merried");
             return;
         }
+        
         interaction.reply(`does ${user} accept your merrage proposal (make this pretty later)`)
         const filter = m => m.author.id === user.id
         const collector = interaction.channel.createMessageCollector({ filter, time: 3, max: 1});

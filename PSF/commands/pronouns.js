@@ -24,7 +24,7 @@ module.exports = {
             })
             return;
         }
-        db.set(`id_${interaction.user.id}.pronouns`, `${pronouns}`)
+        await db.set(`id_${interaction.user.id}.pronouns`, `${pronouns}`)
         interaction.reply({
             ephemeral: true,
             content: `set your pronouns to ${await db.get(`id_${interaction.user.id}.pronouns`)}`

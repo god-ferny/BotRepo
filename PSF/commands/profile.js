@@ -20,17 +20,18 @@ module.exports = {
             .setThumbnail(user.displayAvatarURL())
 
             if(await db.has(`id_${user.id}.age`)){
-               embed.addField("age", await db.get(`id_${user.id}.age`), true)
+                embed.addFields({ name: 'age', value: await db.get(`id_${user.id}.age`), inline: true})
+                
            } else {
-               embed.addField('age', "n/a", true)
+               embed.addFields({ name: 'age', value: "n/a", inline: true})
             }  
             if(await db.has(`id_${user.id}.pronouns`)){
-                embed.addField("pronouns", await db.get(`id_${user.id}.pronouns`), true)
+                embed.addFields({ name: "pronouns", value: await db.get(`id_${user.id}.pronouns`), inline: true })
             } else {
-                embed.addField('pronouns', "n/a", true)
+                embed.addFields({name: 'pronouns',value: "n/a", inline: true})
             }
             if(await db.has(`id_${user.id}.so`)){
-                embed.addField("merried to", `<@!${await db.get(`id_${user.id}.so`)}>`)
+                embed.addFields({ name: "merried to", value: `<@!${await db.get(`id_${user.id}.so`)}>`})
             }
         interaction.reply({embeds: [embed]})
 	},

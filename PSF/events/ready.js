@@ -9,7 +9,7 @@ module.exports = {
         const { REST } = require('@discordjs/rest');
         const { Routes } = require('discord-api-types/v9');
         require('dotenv').config();
-        const clientId = '863141640784576532'
+        const clientId = '684576991860883459'
         const token = process.env.TOKEN
 
 
